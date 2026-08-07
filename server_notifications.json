@@ -1,0 +1,12 @@
+[
+  {
+    "id": "seed-notif-1",
+    "title": "Velvet Terminal Online",
+    "message": "The Dispatch Control Hub is fully synchronized and operational.",
+    "type": "system",
+    "sender": "system",
+    "recipient": "dispatcher",
+    "read": true,
+    "createdAt": "2026-07-13T15:26:17.587Z"
+  }
+]

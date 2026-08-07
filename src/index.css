@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  /* Override default amber palette to map to an ultra-premium satin champagne metallic gold */
+  --color-amber-50: #fcfbf7;   /* Luxurious soft alabaster warm white */
+  --color-amber-100: #f7f1e1;  /* Soft luxury cream */
+  --color-amber-200: #eddcb4;  /* Satin champagne gold */
+  --color-amber-300: #e2c484;  /* Brushed brass */
+  --color-amber-400: #d7ac53;  /* Luxurious satin gold */
+  --color-amber-500: #c5a059;  /* Signature classic metallic gold */
+  --color-amber-600: #ad8640;  /* Rich burnished bronze gold */
+  --color-amber-700: #8f6a31;  /* Antique warm gold */
+  --color-amber-800: #6b4e22;  /* Deep rich mahogany gold */
+  --color-amber-900: #4d3716;  /* Deep gold shadow */
+  --color-amber-950: #2b1d0a;  /* Velvet gold obsidian */
+
+  /* Explicit gold palette matching the same exquisite metallic theme */
+  --color-gold-50: #fcfbf7;
+  --color-gold-100: #f7f1e1;
+  --color-gold-200: #eddcb4;
+  --color-gold-300: #e2c484;
+  --color-gold-400: #d7ac53;
+  --color-gold-500: #c5a059;
+  --color-gold-600: #ad8640;
+  --color-gold-700: #8f6a31;
+  --color-gold-800: #6b4e22;
+  --color-gold-900: #4d3716;
+  --color-gold-950: #2b1d0a;
+
+  /* Custom VIP Variables registered in Tailwind Theme */
+  --color-vip-bg: #0B0C10;
+  --color-vip-card: #1A1D24;
+  --color-vip-gold: #C5A059;
+  --color-vip-gold-hover: #B38F46;
+  --color-vip-text-main: #FFFFFF;
+  --color-vip-text-muted: #A9B4C2;
+}
+
+:root {
+  --color-vip-bg: #0B0C10;
+  --color-vip-card: #1A1D24;
+  --color-vip-gold: #C5A059;
+  --color-vip-gold-hover: #B38F46;
+  --color-vip-text-main: #FFFFFF;
+  --color-vip-text-muted: #A9B4C2;
+}
+
+body {
+  background-color: var(--color-vip-bg);
+  color: var(--color-vip-text-muted);
+}
+
+h1, h2, h3 {
+  color: var(--color-vip-text-main);
+}
+
+.booking-button {
+  background-color: var(--color-vip-gold);
+  color: var(--color-vip-bg); /* Dark text on gold button for readability */
+}
+
+.booking-button:hover {
+  background-color: var(--color-vip-gold-hover);
+}
+
+/* Hide scrollbars for chrome, safari and opera */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbars for IE, Edge and Firefox */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+

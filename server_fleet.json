@@ -1,0 +1,23 @@
+[
+  {
+    "id": "mercedes-e300e-1",
+    "vehicleId": "mercedes-e300e",
+    "name": "Mercedes-Benz E300e (Silver EQ)",
+    "plateNumber": "B-9921-XG",
+    "status": "active"
+  },
+  {
+    "id": "tesla-3-1",
+    "vehicleId": "tesla-3",
+    "name": "Tesla Model 3 (Carbon Black)",
+    "plateNumber": "B-4402-TH",
+    "status": "active"
+  },
+  {
+    "id": "mercedes-v300-1",
+    "vehicleId": "mercedes-v300",
+    "name": "Mercedes-Benz V300 (VIP Jet Class)",
+    "plateNumber": "B-8877-LK",
+    "status": "active"
+  }
+]

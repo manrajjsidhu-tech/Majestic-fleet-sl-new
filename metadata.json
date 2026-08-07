@@ -1,0 +1,6 @@
+{
+  "name": "VELVET Chauffeurs Barcelona",
+  "description": "Premium, high-fidelity booking workspace and Catalan route planner for luxury, client-satisfying private chauffeur services in Barcelona.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

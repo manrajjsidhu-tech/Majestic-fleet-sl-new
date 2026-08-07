@@ -1,0 +1,56 @@
+[
+  {
+    "id": "VLV-236470",
+    "bookingType": "distance",
+    "pickup": "Carrer de París, 69, Barcelona",
+    "pickupCoords": {
+      "lat": 41.387834681426426,
+      "lng": 2.1454996400995525,
+      "label": "Carrer de París, 69, Barcelona"
+    },
+    "destination": "Barcelona-El Prat Airport Terminal 1 (T1)",
+    "destinationCoords": {
+      "lat": 41.2878,
+      "lng": 2.0733
+    },
+    "date": "2026-07-18",
+    "time": "14:30",
+    "vehicleId": "mercedes-e300e",
+    "distanceKm": 17.1,
+    "durationMins": 24,
+    "price": 68.4,
+    "remarks": "",
+    "extraStops": [],
+    "preferences": {
+      "silentCabin": false,
+      "beverages": true,
+      "infantSeat": false,
+      "financialTimes": false,
+      "privacyTint": false,
+      "targetTemp": 21,
+      "sriGroup": "none",
+      "sriQuantity": 0,
+      "sriG0Quantity": 0,
+      "sriG1Quantity": 0,
+      "sriG23Quantity": 0,
+      "wheelchairType": "none",
+      "wheelchairQuantity": 0,
+      "airportMeetGreet": false
+    },
+    "contactName": "Manraj singh",
+    "contactEmail": "ms539775@gmail.com",
+    "contactPhone": "+34 640369120",
+    "status": "confirmed",
+    "flightNumber": "",
+    "wantsInvoice": true,
+    "invoiceDocumentNumber": "Y2977478G",
+    "invoiceDocumentType": "national_id",
+    "invoiceFullName": "Manraj singh",
+    "passengersCount": 2,
+    "luggageCount": 2,
+    "cabinLuggageCount": 0,
+    "createdAt": "2026-07-18T17:56:24.133Z",
+    "serviceCode": "8666",
+    "invoiceSent": true
+  }
+]
