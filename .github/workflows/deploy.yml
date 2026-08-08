@@ -34,15 +34,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Ensure public directory and .nojekyll exist
-        run: |
-          mkdir -p public
-          touch public/.nojekyll
-
       - name: Build
         run: bun run build
         env:
           GOOGLE_MAPS_PLATFORM_KEY: ${{ secrets.GOOGLE_MAPS_PLATFORM_KEY }}
+
+      - name: Post-build assets setup
+        run: |
+          touch ./dist/.nojekyll
+          [ -f CNAME ] && cp CNAME ./dist/CNAME || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
