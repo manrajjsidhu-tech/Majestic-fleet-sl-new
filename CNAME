@@ -1,1 +1,6 @@
 www.majesticfleetsl.com
+mkdir -p public
+mv CNAME public/CNAME
+git add .
+git commit -m "move CNAME to public directory"
+git push origin main
