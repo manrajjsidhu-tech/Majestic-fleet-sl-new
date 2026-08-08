@@ -1,6 +1,6 @@
 /**
  * Centralized API Service Helper
- * Wraps native fetch calls with automatic retry capabilities and enhanced error logging for 404 responses.
+ * Wraps native fetch calls with automatic retry capabilities and enhanced error logging.
  */
 
 export interface ApiFetchOptions extends RequestInit {
@@ -8,31 +8,47 @@ export interface ApiFetchOptions extends RequestInit {
   retryDelay?: number;
 }
 
+// Get API Base URL from environment variables or default to current origin
+const API_BASE_URL =
+  typeof process !== "undefined" && process.env?.VITE_API_BASE_URL
+    ? process.env.VITE_API_BASE_URL
+    : "";
+
 /**
- * Custom fetch wrapper that automatically retries failed requests and logs 404/network errors.
+ * Custom fetch wrapper that automatically retries failed 5xx/network requests.
  */
 export async function apiFetch<T = any>(url: string, options: ApiFetchOptions = {}): Promise<T> {
   const { retries = 2, retryDelay = 1000, ...fetchOptions } = options;
   const method = fetchOptions.method || "GET";
+  const targetUrl = url.startsWith("http") ? url : `${API_BASE_URL}${url}`;
   let attempt = 0;
 
   while (attempt <= retries) {
     try {
-      const response = await fetch(url, fetchOptions);
+      const response = await fetch(targetUrl, fetchOptions);
 
       if (!response.ok) {
         if (response.status === 404) {
-          console.error(
-            `[API Service 404 Not Found] Endpoint: ${method} ${url} | Attempt ${attempt + 1}/${retries + 1}`
-          );
-        } else {
-          console.warn(
-            `[API Service Error ${response.status}] Endpoint: ${method} ${url} | Attempt ${attempt + 1}/${retries + 1}`
-          );
+          console.error(`[API Service 404 Not Found] Endpoint: ${method} ${targetUrl}`);
+          let errorMessage = `HTTP 404: Endpoint ${targetUrl} not found on server`;
+          try {
+            const errorJson = await response.json();
+            if (errorJson?.error || errorJson?.message) {
+              errorMessage = errorJson.error || errorJson.message;
+            }
+          } catch {
+            // Non-JSON response
+          }
+          // DO NOT retry on 404 as the route does not exist
+          throw new Error(errorMessage);
         }
 
-        // Retry on 404 or 5xx server errors if attempts remain
-        if (attempt < retries && (response.status === 404 || response.status >= 500)) {
+        console.warn(
+          `[API Service Error ${response.status}] Endpoint: ${method} ${targetUrl} | Attempt ${attempt + 1}/${retries + 1}`
+        );
+
+        // Retry ONLY on 5xx server errors
+        if (attempt < retries && response.status >= 500) {
           attempt++;
           await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt));
           continue;
@@ -58,22 +74,22 @@ export async function apiFetch<T = any>(url: string, options: ApiFetchOptions = 
       const text = await response.text();
       return text as unknown as T;
     } catch (err: any) {
-      if (attempt < retries) {
+      if (attempt < retries && !err.message?.includes("HTTP 404")) {
         console.warn(
-          `[API Service Retrying] ${method} ${url} failed with error: "${err.message || err}". Retrying in ${retryDelay * (attempt + 1)}ms... (Attempt ${attempt + 1}/${retries})`
+          `[API Service Retrying] ${method} ${targetUrl} failed: "${err.message || err}". Retrying in ${retryDelay * (attempt + 1)}ms...`
         );
         attempt++;
         await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt));
       } else {
         console.error(
-          `[API Service Request Failed] ${method} ${url} failed after ${retries + 1} attempts: ${err.message || err}`
+          `[API Service Request Failed] ${method} ${targetUrl}: ${err.message || err}`
         );
         throw err;
       }
     }
   }
 
-  throw new Error(`[API Service] Failed to execute request for ${url}`);
+  throw new Error(`[API Service] Failed to execute request for ${targetUrl}`);
 }
 
 /**
@@ -94,7 +110,11 @@ export const bookingApi = {
     }),
 
   /** Assign a driver to a booking (/api/reserve/:id/assign) */
-  assignDriver: (bookingId: string, payload: { assignedDriverId?: string | null; driverPhone?: string; driverName?: string }, options?: ApiFetchOptions) =>
+  assignDriver: (
+    bookingId: string,
+    payload: { assignedDriverId?: string | null; driverPhone?: string; driverName?: string },
+    options?: ApiFetchOptions
+  ) =>
     apiFetch<any>(`/api/reserve/${bookingId}/assign`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
