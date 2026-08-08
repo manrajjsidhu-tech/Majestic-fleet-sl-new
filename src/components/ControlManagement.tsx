@@ -789,7 +789,7 @@ export default function ControlManagement({
 
     const vehicleLabel = matchedVehicle
       ? `${matchedVehicle.name} [MATRÍCULA: ${matchedVehicle.plateNumber}] (${matchedVehicle.category || "Flota VIP"})`
-      : `${trip.vehicleId || "Standard Sedan"} (${trip.passengers || 1} Pax, ${trip.luggage || 0} Maletes)`;
+      : `${trip.vehicleId || "Standard Sedan"} (${trip.passengersCount || 1} Pax, ${trip.luggageCount || 0} Maletes)`;
 
     return `🚖 *DISPATCH DE SERVEI - VELVET RIDES* ${trip.serviceCode ? `[COD: ${trip.serviceCode}]` : `#${trip.id}`}
 ------------------------------------------
@@ -3991,7 +3991,7 @@ export default function ControlManagement({
                                                         🚖 {b.vehicleId || "Standard Sedan"}
                                                       </span>
                                                       <div className="text-[9.5px] text-neutral-500 font-mono mt-1">
-                                                        👥 {b.passengers || 1} Pax | 🧳 {b.luggage || 0} Bags
+                                                        👥 {b.passengersCount || 1} Pax | 🧳 {b.luggageCount || 0} Bags
                                                       </div>
                                                     </td>
 
