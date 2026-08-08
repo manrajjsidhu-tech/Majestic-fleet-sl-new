@@ -52,7 +52,7 @@ export function getApiUrl(path: string): string {
        !hostname.includes("stackblitz") &&
        !hostname.includes("csb.app"))
     ) {
-      const defaultBackend = "https://majestic-fleet-sl-new-git-1055003675201.europe-west1.run.app";
+      const defaultBackend = "https://ais-dev-4754c3egiqsmkgg6vkkgmg-932327018206.europe-west2.run.app";
       return `${defaultBackend}${cleanPath}`;
     }
   }
