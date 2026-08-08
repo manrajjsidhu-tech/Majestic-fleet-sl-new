@@ -1469,9 +1469,39 @@ export default function App() {
             <p className="font-mono text-[8px] tracking-widest text-amber-500 font-semibold -mt-1 uppercase">{t.brandSlogan}</p>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Direct Quick Contact Buttons */}
+            <a
+              href="tel:+34640369120"
+              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded border border-neutral-800 bg-neutral-900/80 hover:bg-neutral-800 hover:border-amber-500/50 text-amber-400 text-[10px] font-mono font-bold tracking-wider uppercase transition-all shadow-sm"
+              title="Direct Call +34 640 36 91 20"
+            >
+              <Phone className="w-3 h-3 text-amber-500 shrink-0" />
+              <span>+34 640 36 91 20</span>
+            </a>
+
+            <a
+              href="https://wa.me/34640369120?text=Hello%20Majestic%20Fleet%2C%20I%20would%20like%20to%20inquire%20about%20a%20private%20transfer."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-emerald-900/60 bg-emerald-950/40 hover:bg-emerald-900/60 hover:border-emerald-500 text-emerald-400 text-[10px] font-mono font-bold tracking-wider uppercase transition-all shadow-sm"
+              title="Direct WhatsApp Chat"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="hidden sm:inline">WhatsApp</span>
+            </a>
+
+            <a
+              href="mailto:majesticfleetsl@gmail.com"
+              className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded border border-neutral-800 bg-neutral-900/80 hover:bg-neutral-800 hover:border-amber-500/50 text-neutral-300 hover:text-amber-400 text-[10px] font-mono font-bold tracking-wider transition-all shadow-sm"
+              title="Direct Email majesticfleetsl@gmail.com"
+            >
+              <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span>Email</span>
+            </a>
+
             {/* Elegant Language Toggle Slider */}
-            <div className="flex items-center bg-neutral-900 rounded-sm p-0.5 border border-neutral-800 shadow-inner mr-1">
+            <div className="flex items-center bg-neutral-900 rounded-sm p-0.5 border border-neutral-800 shadow-inner mr-0.5">
               <button
                 type="button"
                 onClick={() => setLang("en")}
@@ -1522,7 +1552,7 @@ export default function App() {
               {/* Animated Dropdown Menu */}
               <AnimatePresence>
                 {mobileMenuOpen && (
-                  <>
+                  <motion.div key="mobile-menu-container">
                     {/* Invisible overlay to close on click outside */}
                     <div 
                       className="fixed inset-0 z-[1999] bg-transparent" 
@@ -1530,6 +1560,7 @@ export default function App() {
                     />
                     
                     <motion.div
+                      key="mobile-menu-dropdown"
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 5, scale: 0.95 }}
@@ -1587,7 +1618,7 @@ export default function App() {
                         </p>
                       </div>
                     </motion.div>
-                  </>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
@@ -2395,15 +2426,40 @@ export default function App() {
         </div>
       </footer>
 
+      {/* Floating Quick Contact Action Bar */}
+      <div className="fixed bottom-5 right-5 z-[1900] flex flex-col gap-2.5 items-end pointer-events-auto">
+        <a
+          href="https://wa.me/34640369120?text=Hello%20Majestic%20Fleet%2C%20I%20would%20like%20to%20inquire%20about%20a%20private%20transfer."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white p-3 md:px-4 md:py-2.5 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 border border-emerald-400/30"
+          title="Direct WhatsApp Chat +34 640 36 91 20"
+        >
+          <MessageCircle className="w-5 h-5 shrink-0 fill-current" />
+          <span className="hidden md:inline text-xs font-bold tracking-wider font-mono">WhatsApp Chat</span>
+        </a>
+
+        <a
+          href="tel:+34640369120"
+          className="group flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-amber-400 p-3 md:px-4 md:py-2.5 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 border border-amber-500/40"
+          title="Direct Call +34 640 36 91 20"
+        >
+          <Phone className="w-4 h-4 shrink-0 text-amber-500" />
+          <span className="hidden md:inline text-xs font-bold tracking-wider font-mono">+34 640 36 91 20</span>
+        </a>
+      </div>
+
       {/* Exquisite Digital Voucher Modal Overlay */}
       <AnimatePresence>
         {viewingVoucherBooking && (
-          <BookingItineraryModal
-            booking={viewingVoucherBooking}
-            vehicles={localizedVehicles}
-            onClose={() => setViewingVoucherBooking(null)}
-            lang={lang}
-          />
+          <motion.div key="voucher-modal-wrapper">
+            <BookingItineraryModal
+              booking={viewingVoucherBooking}
+              vehicles={localizedVehicles}
+              onClose={() => setViewingVoucherBooking(null)}
+              lang={lang}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

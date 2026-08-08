@@ -417,6 +417,8 @@ export default function LiveDriverTrackingModal({
       }
     }
 
+    if (!mapRef.current) return;
+
     // Add Pickup Marker
     if (!pickupMarkerRef.current) {
       const pickupIconHtml = `
@@ -786,7 +788,14 @@ export default function LiveDriverTrackingModal({
 
   return (
     <AnimatePresence>
-      <div id="driver-tracking-modal" className="fixed inset-0 z-[10000] flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-10 bg-neutral-950/80 backdrop-blur-md">
+      <motion.div 
+        key="driver-tracking-modal-root"
+        id="driver-tracking-modal" 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[10000] flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-10 bg-neutral-950/80 backdrop-blur-md"
+      >
         <style dangerouslySetInnerHTML={{ __html: `
           .luxury-leaflet-map .leaflet-tile {
             filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%) saturate(40%) sepia(10%) !important;
@@ -1321,7 +1330,7 @@ export default function LiveDriverTrackingModal({
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </AnimatePresence>
   );
 }

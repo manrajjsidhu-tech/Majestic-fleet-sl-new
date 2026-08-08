@@ -1851,6 +1851,7 @@ export default function ControlManagement({
       <AnimatePresence>
         {overlayMode !== "none" && (
           <motion.div
+            key="full-viewport-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -2042,6 +2043,7 @@ export default function ControlManagement({
                         <AnimatePresence>
                           {mobileDispatchMenuOpen && (
                             <motion.div
+                              key="mobile-dispatch-menu"
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: "auto" }}
                               exit={{ opacity: 0, height: 0 }}
