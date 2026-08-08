@@ -18,13 +18,13 @@ function cleanEnv(key: string, defaultValue = ""): string {
 }
 
 // Shared Single SMTP Transporter with fast timeouts (reuses pool & prevents blocking/hanging)
-const DEFAULT_SMTP_USER = "majesticfleetsl@gmail.com";
-const DEFAULT_SMTP_PASS = "vfqvbanuzirdcmvf";
+const DEFAULT_SMTP_USER = cleanEnv("SMTP_USER", cleanEnv("GMAIL_USER", "majesticfleetsl@gmail.com"));
+const DEFAULT_SMTP_PASS = cleanEnv("SMTP_PASS", cleanEnv("GMAIL_PASS", "vfqvbanuzirdcmvf"));
 
 const sharedTransporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // TLS via STARTTLS on 587
+  host: cleanEnv("SMTP_HOST", "smtp.gmail.com"),
+  port: parseInt(cleanEnv("SMTP_PORT", "587"), 10),
+  secure: cleanEnv("SMTP_SECURE", "false") === "true", // TLS via STARTTLS on 587
   auth: {
     user: DEFAULT_SMTP_USER,
     pass: DEFAULT_SMTP_PASS,
@@ -2406,7 +2406,7 @@ app.post("/api/notifications/clear", (req, res) => {
 });
 
 // Fallback for unmatched API routes
-app.use("/api/*", (req, res) => {
+app.all(["/api", "/api/*"], (req, res) => {
   res.status(404).json({ error: `API endpoint ${req.method} ${req.path} not found` });
 });
 

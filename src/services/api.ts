@@ -39,24 +39,6 @@ export function getApiUrl(path: string): string {
     return `${envBackend.replace(/\/$/, "")}${cleanPath}`;
   }
 
-  // 3. If running on majesticfleetsl.com or another external host origin that is not localhost or Cloud Run,
-  // target the active Cloud Run server deployment URL
-  if (typeof window !== "undefined" && window.location) {
-    const hostname = window.location.hostname;
-    if (
-      hostname.includes("majesticfleetsl.com") ||
-      (!hostname.includes("localhost") &&
-       !hostname.includes("127.0.0.1") &&
-       !hostname.includes("run.app") &&
-       !hostname.includes("webcontainer") &&
-       !hostname.includes("stackblitz") &&
-       !hostname.includes("csb.app"))
-    ) {
-      const defaultBackend = "https://ais-dev-4754c3egiqsmkgg6vkkgmg-932327018206.europe-west2.run.app";
-      return `${defaultBackend}${cleanPath}`;
-    }
-  }
-
   return cleanPath;
 }
 
@@ -85,8 +67,8 @@ export async function apiFetch<T = any>(url: string, options: ApiFetchOptions = 
           );
         }
 
-        // Retry on 404 or 5xx server errors if attempts remain
-        if (attempt < retries && (response.status === 404 || response.status >= 500)) {
+        // Retry on 5xx server errors if attempts remain
+        if (attempt < retries && response.status >= 500) {
           attempt++;
           await new Promise((resolve) => setTimeout(resolve, retryDelay * attempt));
           continue;
