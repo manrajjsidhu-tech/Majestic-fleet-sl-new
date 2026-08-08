@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Types
+// Interfaces
 interface BookingRequest {
   customerName: string;
   customerEmail: string;
@@ -174,7 +174,7 @@ app.post('/api/invoices/generate', (req: Request, res: Response) => {
   }
 });
 
-// Fallback Middleware for Undefined API Routes (Prevents 404 HTML Responses)
+// Fallback Middleware for Undefined API Routes
 app.use('/api/*', (req: Request, res: Response) => {
   res.status(404).json({ error: `API endpoint ${req.originalUrl} not found.` });
 });
@@ -185,7 +185,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Start Server (Binds to 0.0.0.0 for Cloud Run compatibility)
+// Start Server
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
