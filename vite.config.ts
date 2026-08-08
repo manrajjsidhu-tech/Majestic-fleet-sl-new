@@ -9,6 +9,12 @@ export default defineConfig(() => {
     define: {
       'process.env.GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(process.env.GOOGLE_MAPS_PLATFORM_KEY || '')
     },
+    build: {
+      target: 'es2020',
+    },
+    esbuild: {
+      target: 'es2020',
+    },
     resolve: {
       alias: {
         '@': path.resolve(process.cwd(), '.'),

@@ -564,7 +564,7 @@ export default function ControlManagement({
   const [isDispatcherLogged, setIsDispatcherLogged] = useState(() => {
     try {
       return localStorage.getItem("velvet_dispatcher_logged") === "true";
-    } catch {
+    } catch (_err) {
       return false;
     }
   });
@@ -575,7 +575,7 @@ export default function ControlManagement({
     try {
       const stored = localStorage.getItem("velvet_driver_logged_data");
       return stored ? JSON.parse(stored) : null;
-    } catch {
+    } catch (_err) {
       return null;
     }
   });
@@ -588,7 +588,7 @@ export default function ControlManagement({
   const [serviceCodeAuthBookingId, setServiceCodeAuthBookingId] = useState<string | null>(() => {
     try {
       return localStorage.getItem("velvet_driver_logged_service_code_booking_id");
-    } catch {
+    } catch (_err) {
       return null;
     }
   });
@@ -1115,7 +1115,7 @@ export default function ControlManagement({
       setDispatcherPassword("");
       try {
         localStorage.setItem("velvet_dispatcher_logged", "true");
-      } catch {}
+      } catch (_err) {}
     } else {
       setAuthError(t.incorrectPw);
     }
@@ -1125,7 +1125,7 @@ export default function ControlManagement({
     setIsDispatcherLogged(false);
     try {
       localStorage.removeItem("velvet_dispatcher_logged");
-    } catch {}
+    } catch (_err) {}
   };
 
   // Driver login routine
@@ -1149,7 +1149,7 @@ export default function ControlManagement({
           "velvet_driver_logged_data",
           JSON.stringify(found),
         );
-      } catch {}
+      } catch (_err) {}
     } else {
       setAuthError(
         lang === "ca"
@@ -1217,7 +1217,7 @@ export default function ControlManagement({
       } else {
         localStorage.removeItem("velvet_driver_logged_service_code_booking_id");
       }
-    } catch {}
+    } catch (_err) {}
 
     // Sync driver phone and name to backend booking if found
     if (foundBooking) {
@@ -1244,7 +1244,7 @@ export default function ControlManagement({
     try {
       localStorage.removeItem("velvet_driver_logged_data");
       localStorage.removeItem("velvet_driver_logged_service_code_booking_id");
-    } catch {}
+    } catch (_err) {}
   };
 
   // Registering or updating drivers
@@ -1293,7 +1293,7 @@ export default function ControlManagement({
               "velvet_driver_logged_data",
               JSON.stringify(updatedDriver),
             );
-          } catch {}
+          } catch (_err) {}
         }
 
         await fetchDriversAndFleet();
@@ -1415,7 +1415,7 @@ export default function ControlManagement({
         setLoggedInDriver(updatedTemp);
         try {
           localStorage.setItem("velvet_driver_logged_data", JSON.stringify(updatedTemp));
-        } catch {}
+        } catch (_err) {}
         setMobileSuccess(
           lang === "ca"
             ? "Número de telèfon del xòfer actualitzat correctament per als clients."
@@ -1462,7 +1462,7 @@ export default function ControlManagement({
           "velvet_driver_logged_data",
           JSON.stringify(updated),
         );
-      } catch {}
+      } catch (_err) {}
 
       await fetchDriversAndFleet();
       setMobileSuccess(

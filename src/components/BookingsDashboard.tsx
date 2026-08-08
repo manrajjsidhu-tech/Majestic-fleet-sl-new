@@ -272,7 +272,7 @@ export default function BookingsDashboard({
     try {
       const saved = localStorage.getItem("majestic_booking_messages");
       return saved ? JSON.parse(saved) : {};
-    } catch {
+    } catch (_err) {
       return {};
     }
   });
@@ -581,7 +581,7 @@ export default function BookingsDashboard({
       const now = new Date();
       const refTime = new Date("2026-06-13T13:53:43-07:00");
       return now > bEnd || refTime > bEnd;
-    } catch {
+    } catch (_err) {
       return false;
     }
   };
@@ -594,7 +594,7 @@ export default function BookingsDashboard({
       const diffMs = bDate.getTime() - now.getTime();
       const oneHourMs = 60 * 60 * 1000;
       return diffMs >= oneHourMs;
-    } catch {
+    } catch (_err) {
       return false;
     }
   };

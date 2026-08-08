@@ -1320,7 +1320,7 @@ function parseDateTime(dt: string) {
             const d2 = new Date();
             date = d2.toISOString().split("T")[0];
           }
-        } catch {
+        } catch (_err) {
           const d = new Date();
           date = d.toISOString().split("T")[0];
         }
@@ -2388,6 +2388,11 @@ app.post("/api/notifications/clear", (req, res) => {
 
   writeServerNotifications(notifs);
   res.json({ success: true, message: "Notifications marked as read" });
+});
+
+// Fallback for unmatched API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ error: `API endpoint ${req.method} ${req.path} not found` });
 });
 
 // Setup Vite Development and Production compilation servers
