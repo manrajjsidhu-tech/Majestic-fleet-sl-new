@@ -33,7 +33,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 
 import { Vehicle, VehicleCategory, Booking, SpecialPreference, WayPoint } from "./types";
-import { bookingApi, vehiclePriceApi } from "./services/api";
+import { bookingApi, vehiclePriceApi, getApiUrl } from "./services/api";
 import { Language, SIGHTS_TRANSLATIONS, VEHICLES_TRANSLATIONS, TESTIMONIALS_TRANSLATIONS, UI_TRANSLATIONS } from "./lib/translations";
 import AddressInput from "./components/AddressInput";
 import ControlManagement from "./components/ControlManagement";
@@ -598,7 +598,7 @@ export default function App() {
     try {
       const extraStopsNames = extraStops.map((st) => st.address);
 
-      const res = await fetch("/api/gemini/generate-inspiration-image", {
+      const res = await fetch(getApiUrl("/api/gemini/generate-inspiration-image"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -642,7 +642,7 @@ export default function App() {
 
     try {
       const extraStopsNames = extraStops.map((st) => st.address);
-      const res = await fetch("/api/gemini/plan", {
+      const res = await fetch(getApiUrl("/api/gemini/plan"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

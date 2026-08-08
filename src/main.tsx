@@ -3,12 +3,13 @@ import {createRoot} from 'react-dom/client';
 import 'leaflet/dist/leaflet.css';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import { getApiUrl } from './services/api';
 import './index.css';
 
 console.log("[VELVET] Mounting Velvet Chauffeur App root...");
 
 // Auto-load Google Maps JavaScript SDK if API Key is configured
-fetch("/api/config/maps-key")
+fetch(getApiUrl("/api/config/maps-key"))
   .then((res) => res.json())
   .then(({ apiKey }) => {
     if (apiKey && !(window as any).google?.maps) {

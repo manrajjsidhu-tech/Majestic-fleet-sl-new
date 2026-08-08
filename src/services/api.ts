@@ -9,16 +9,70 @@ export interface ApiFetchOptions extends RequestInit {
 }
 
 /**
- * Custom fetch wrapper that automatically retries failed requests and logs 404/network errors.
+ * Resolves full API URL ensuring cross-origin requests from external sites (e.g. majesticfleetsl.com)
+ * target the live Cloud Run backend server.
+ */
+export function getApiUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+
+  // 1. Check window overrides or URL parameters
+  if (typeof window !== "undefined") {
+    const win = window as any;
+    if (win.__VELVET_BACKEND_URL__) return `${win.__VELVET_BACKEND_URL__.replace(/\/$/, "")}${cleanPath}`;
+    if (win.__API_BASE_URL__) return `${win.__API_BASE_URL__.replace(/\/$/, "")}${cleanPath}`;
+
+    try {
+      const urlParams = new URLSearchParams(win.location.search);
+      const backendParam = urlParams.get("backend") || urlParams.get("api_base");
+      if (backendParam) {
+        return `${backendParam.replace(/\/$/, "")}${cleanPath}`;
+      }
+    } catch {}
+  }
+
+  // 2. Check environment variables
+  const envBackend = (import.meta as any).env?.VITE_BACKEND_URL || (import.meta as any).env?.VITE_APP_URL;
+  if (envBackend && typeof envBackend === "string" && envBackend.startsWith("http")) {
+    return `${envBackend.replace(/\/$/, "")}${cleanPath}`;
+  }
+
+  // 3. If running on majesticfleetsl.com or another external host origin that is not localhost or Cloud Run,
+  // target the active Cloud Run server deployment URL
+  if (typeof window !== "undefined" && window.location) {
+    const hostname = window.location.hostname;
+    if (
+      hostname.includes("majesticfleetsl.com") ||
+      (!hostname.includes("localhost") &&
+       !hostname.includes("127.0.0.1") &&
+       !hostname.includes("run.app") &&
+       !hostname.includes("webcontainer") &&
+       !hostname.includes("stackblitz") &&
+       !hostname.includes("csb.app"))
+    ) {
+      const defaultBackend = "https://ais-dev-4754c3egiqsmkgg6vkkgmg-932327018206.europe-west2.run.app";
+      return `${defaultBackend}${cleanPath}`;
+    }
+  }
+
+  return cleanPath;
+}
+
+/**
+ * Custom fetch wrapper that automatically resolves cross-origin API URLs, retries failed requests,
+ * and logs error details.
  */
 export async function apiFetch<T = any>(url: string, options: ApiFetchOptions = {}): Promise<T> {
+  const resolvedUrl = getApiUrl(url);
   const { retries = 2, retryDelay = 1000, ...fetchOptions } = options;
   const method = fetchOptions.method || "GET";
   let attempt = 0;
 
   while (attempt <= retries) {
     try {
-      const response = await fetch(url, fetchOptions);
+      const response = await fetch(resolvedUrl, fetchOptions);
 
       if (!response.ok) {
         if (response.status === 404) {

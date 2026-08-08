@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Clock, Calendar, Shield, Receipt, Trash2, Edit2, CheckCircle2, AlertTriangle, Ship, Car, Compass, Sparkles, Printer, Plane, MessageSquare, Send, Loader2, Mail, Phone } from "lucide-react";
 import { motion } from "motion/react";
 import { Booking, Vehicle } from "../types";
-import { bookingApi } from "../services/api";
+import { bookingApi, getApiUrl } from "../services/api";
 import PostTripFeedback from "./PostTripFeedback";
 import BookingItineraryModal from "./BookingItineraryModal";
 import LiveDriverTrackingModal from "./LiveDriverTrackingModal";
@@ -342,7 +342,7 @@ export default function BookingsDashboard({
   };
 
   useEffect(() => {
-    fetch("/api/drivers")
+    fetch(getApiUrl("/api/drivers"))
       .then((res) => {
         if (res.ok) return res.json();
         return [];

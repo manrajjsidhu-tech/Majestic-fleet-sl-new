@@ -56,7 +56,7 @@ import {
   Pie,
 } from "recharts";
 import { Booking, Driver, FleetItem, Vehicle } from "../types";
-import { bookingApi, vehiclePriceApi } from "../services/api";
+import { bookingApi, vehiclePriceApi, getApiUrl } from "../services/api";
 
 // Standard translations to fit smoothly with the app's CA / EN localizations
 const LOCAL_TRANSLATIONS = {
@@ -846,7 +846,7 @@ export default function ControlManagement({
 
     const updateLocationOnServer = async (lat: number, lng: number) => {
       try {
-        const resp = await fetch(`/api/drivers/${loggedInDriver.id}`, {
+        const resp = await fetch(getApiUrl(`/api/drivers/${loggedInDriver.id}`), {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -934,8 +934,8 @@ export default function ControlManagement({
     try {
       setIsSyncing(true);
       const [resDrivers, resFleet] = await Promise.all([
-        fetch("/api/drivers"),
-        fetch("/api/fleet"),
+        fetch(getApiUrl("/api/drivers")),
+        fetch(getApiUrl("/api/fleet")),
       ]);
       if (resDrivers.ok) {
         const driversData = await resDrivers.json();
@@ -962,7 +962,7 @@ export default function ControlManagement({
 
   const fetchDispatcherNotifications = async () => {
     try {
-      const res = await fetch("/api/notifications?recipient=dispatcher");
+      const res = await fetch(getApiUrl("/api/notifications?recipient=dispatcher"));
       if (res.ok) {
         const data = await res.json();
         setDispatcherNotifications(data || []);
@@ -976,7 +976,7 @@ export default function ControlManagement({
     if (!driverIdVal) return;
     try {
       const res = await fetch(
-        `/api/notifications?recipient=driver&driverId=${driverIdVal}`,
+        getApiUrl(`/api/notifications?recipient=driver&driverId=${driverIdVal}`),
       );
       if (res.ok) {
         const data = await res.json();
@@ -989,7 +989,7 @@ export default function ControlManagement({
 
   const clearDispatcherNotifications = async () => {
     try {
-      const res = await fetch("/api/notifications/clear", {
+      const res = await fetch(getApiUrl("/api/notifications/clear"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ recipient: "dispatcher" }),
@@ -1005,7 +1005,7 @@ export default function ControlManagement({
   const clearDriverNotifications = async () => {
     if (!loggedInDriver) return;
     try {
-      const res = await fetch("/api/notifications/clear", {
+      const res = await fetch(getApiUrl("/api/notifications/clear"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1044,7 +1044,7 @@ export default function ControlManagement({
             : undefined,
       };
 
-      const res = await fetch("/api/notifications", {
+      const res = await fetch(getApiUrl("/api/notifications"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -1255,7 +1255,7 @@ export default function ControlManagement({
     try {
       if (editingDriverId) {
         // Update mode
-        const resp = await fetch(`/api/drivers/${editingDriverId}`, {
+        const resp = await fetch(getApiUrl(`/api/drivers/${editingDriverId}`), {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1283,7 +1283,7 @@ export default function ControlManagement({
         setEditingDriverId(null);
       } else {
         // Create mode
-        const resp = await fetch("/api/drivers", {
+        const resp = await fetch(getApiUrl("/api/drivers"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1321,7 +1321,7 @@ export default function ControlManagement({
     }
 
     try {
-      const resp = await fetch(`/api/drivers/${drvId}`, {
+      const resp = await fetch(getApiUrl(`/api/drivers/${drvId}`), {
         method: "DELETE",
       });
       if (!resp.ok) {
@@ -1416,7 +1416,7 @@ export default function ControlManagement({
     }
 
     try {
-      const resp = await fetch(`/api/drivers/${loggedInDriver.id}`, {
+      const resp = await fetch(getApiUrl(`/api/drivers/${loggedInDriver.id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1477,7 +1477,7 @@ export default function ControlManagement({
     }
 
     try {
-      const resp = await fetch(`/api/drivers/${loggedInDriver.id}`, {
+      const resp = await fetch(getApiUrl(`/api/drivers/${loggedInDriver.id}`), {
         method: "DELETE",
       });
       if (!resp.ok) {
@@ -1535,7 +1535,7 @@ export default function ControlManagement({
 
   const handleUpdateFleetStatus = async (fleetId: string, status: string) => {
     try {
-      const resp = await fetch(`/api/fleet/${fleetId}`, {
+      const resp = await fetch(getApiUrl(`/api/fleet/${fleetId}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -1582,7 +1582,7 @@ export default function ControlManagement({
     try {
       if (editingVehicleId) {
         // Update mode
-        const resp = await fetch(`/api/fleet/${editingVehicleId}`, {
+        const resp = await fetch(getApiUrl(`/api/fleet/${editingVehicleId}`), {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1601,7 +1601,7 @@ export default function ControlManagement({
         setEditingVehicleId(null);
       } else {
         // Create mode
-        const resp = await fetch("/api/fleet", {
+        const resp = await fetch(getApiUrl("/api/fleet"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1688,7 +1688,7 @@ export default function ControlManagement({
     }
 
     try {
-      const resp = await fetch(`/api/fleet/${vehicleId}`, {
+      const resp = await fetch(getApiUrl(`/api/fleet/${vehicleId}`), {
         method: "DELETE",
       });
 
@@ -3549,7 +3549,7 @@ export default function ControlManagement({
                                                 <div className="flex items-center justify-center gap-2">
                                                   <button
                                                     type="button"
-                                                    onClick={() => window.open(`/api/bookings/${b.id}/invoice-pdf?lang=es`, "_blank")}
+                                                    onClick={() => window.open(getApiUrl(`/api/bookings/${b.id}/invoice-pdf?lang=es`), "_blank")}
                                                     className="bg-neutral-850 hover:bg-neutral-900 text-amber-500 hover:text-amber-400 px-2.5 py-1.5 rounded text-[11px] font-mono font-bold uppercase cursor-pointer border border-neutral-700 hover:border-amber-500/30 transition-all flex items-center gap-1"
                                                     title={lang === "ca" ? "Veure PDF" : "Ver PDF en Castellano"}
                                                   >
