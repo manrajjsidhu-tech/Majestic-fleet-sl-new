@@ -92,21 +92,28 @@ export default function InteractiveMap({
 
     // Initialize map if not already done
     if (!leafletMapRef.current) {
-      leafletMapRef.current = L.map(mapContainerRef.current, {
-        zoomControl: true,
-        scrollWheelZoom: false, // Prevent accidental scrolling while browsing the page
-        touchZoom: "center", // Smoother touch zoom centered
-      }).setView([41.3879, 2.1699], 12);
+      if ((mapContainerRef.current as any)._leaflet_id) {
+        (mapContainerRef.current as any)._leaflet_id = null;
+      }
+      try {
+        leafletMapRef.current = L.map(mapContainerRef.current, {
+          zoomControl: true,
+          scrollWheelZoom: false, // Prevent accidental scrolling while browsing the page
+          touchZoom: "center", // Smoother touch zoom centered
+        }).setView([41.3879, 2.1699], 12);
 
-      // CartoDB Voyager - beautiful, warm, sleek minimalist map tiles
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-        {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          subdomains: "abcd",
-          maxZoom: 20,
-        }
-      ).addTo(leafletMapRef.current);
+        // CartoDB Voyager - beautiful, warm, sleek minimalist map tiles
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+          {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: "abcd",
+            maxZoom: 20,
+          }
+        ).addTo(leafletMapRef.current);
+      } catch (e) {
+        console.warn("[MAJESTIC] Leaflet map initialization caught exception:", e);
+      }
     }
 
     const mapInstance = leafletMapRef.current;

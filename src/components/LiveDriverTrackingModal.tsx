@@ -403,11 +403,18 @@ export default function LiveDriverTrackingModal({
     if (!leafletLoaded || !mapContainerRef.current) return;
 
     if (!mapRef.current) {
-      mapRef.current = L.map(mapContainerRef.current, {
-        zoomControl: false,
-        scrollWheelZoom: true,
-        touchZoom: "center"
-      }).setView([targetCoords.lat, targetCoords.lng], 13);
+      if ((mapContainerRef.current as any)._leaflet_id) {
+        (mapContainerRef.current as any)._leaflet_id = null;
+      }
+      try {
+        mapRef.current = L.map(mapContainerRef.current, {
+          zoomControl: false,
+          scrollWheelZoom: true,
+          touchZoom: "center"
+        }).setView([targetCoords.lat, targetCoords.lng], 13);
+      } catch (e) {
+        console.warn("[MAJESTIC] Tracking modal Leaflet map initialization caught exception:", e);
+      }
     }
 
     // Add Pickup Marker

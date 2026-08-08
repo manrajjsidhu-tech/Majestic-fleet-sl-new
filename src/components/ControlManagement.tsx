@@ -779,7 +779,7 @@ export default function ControlManagement({
     const matchedDriver = drivers.find((d) => d.id === trip.assignedDriverId);
     const matchedVehicle = matchedDriver?.assignedVehicleId
       ? fleet.find((v) => v.id === matchedDriver.assignedVehicleId)
-      : fleet.find((v) => v.id === trip.vehicleId || v.baseId === trip.vehicleId);
+      : fleet.find((v) => v.id === trip.vehicleId);
 
     const driverLabel = trip.assignedDriverId === "external-driver"
       ? (lang === "ca" ? "Xòfer Extern (Codi)" : "External Operator")
