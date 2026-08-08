@@ -34,10 +34,13 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Ensure public directory and .nojekyll exist
+        run: |
+          mkdir -p public
+          touch public/.nojekyll
+
       - name: Build
         run: bun run build
-        # If your Vite build needs the Google Maps API key from vite.config.ts,
-        # add it as a Repository Secret in GitHub and pass it here:
         env:
           GOOGLE_MAPS_PLATFORM_KEY: ${{ secrets.GOOGLE_MAPS_PLATFORM_KEY }}
 
