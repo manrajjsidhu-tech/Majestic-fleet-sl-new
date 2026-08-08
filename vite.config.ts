@@ -4,11 +4,12 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Change '/my-app/' to your exact GitHub repository name
+  // Change 'my-app' to your exact GitHub repository name
   base: process.env.NODE_ENV === 'production' ? '/my-app/' : '/',
   plugins: [react(), tailwindcss()],
-  // ... rest of config
-});
+  define: {
+    'process.env.GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(process.env.GOOGLE_MAPS_PLATFORM_KEY || ''),
+  },
   resolve: {
     alias: {
       '@': path.resolve(process.cwd(), '.'),
