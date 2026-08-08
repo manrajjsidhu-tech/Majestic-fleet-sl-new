@@ -33,6 +33,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 
 import { Vehicle, VehicleCategory, Booking, SpecialPreference, WayPoint } from "./types";
+import { bookingApi, vehiclePriceApi } from "./services/api";
 import { Language, SIGHTS_TRANSLATIONS, VEHICLES_TRANSLATIONS, TESTIMONIALS_TRANSLATIONS, UI_TRANSLATIONS } from "./lib/translations";
 import AddressInput from "./components/AddressInput";
 import ControlManagement from "./components/ControlManagement";
@@ -299,26 +300,23 @@ export default function App() {
 
   const fetchVehiclePrices = async () => {
     try {
-      const res = await fetch("/api/vehicle-prices");
-      if (res.ok) {
-        const pricesData = await res.json();
-        if (Array.isArray(pricesData) && pricesData.length > 0) {
-          setVehiclesList((prevVehicles) =>
-            prevVehicles.map((v) => {
-              const override = pricesData.find((p: any) => p.id === v.id);
-              if (override) {
-                return {
-                  ...v,
-                  basePrice: typeof override.basePrice === "number" ? override.basePrice : v.basePrice,
-                  pricePerKm: typeof override.pricePerKm === "number" ? override.pricePerKm : v.pricePerKm,
-                  minPrice: typeof override.minPrice === "number" ? override.minPrice : v.minPrice,
-                  hourlyRate: typeof override.hourlyRate === "number" ? override.hourlyRate : v.hourlyRate,
-                };
-              }
-              return v;
-            })
-          );
-        }
+      const pricesData = await vehiclePriceApi.getPrices();
+      if (Array.isArray(pricesData) && pricesData.length > 0) {
+        setVehiclesList((prevVehicles) =>
+          prevVehicles.map((v) => {
+            const override = pricesData.find((p: any) => p.id === v.id);
+            if (override) {
+              return {
+                ...v,
+                basePrice: typeof override.basePrice === "number" ? override.basePrice : v.basePrice,
+                pricePerKm: typeof override.pricePerKm === "number" ? override.pricePerKm : v.pricePerKm,
+                minPrice: typeof override.minPrice === "number" ? override.minPrice : v.minPrice,
+                hourlyRate: typeof override.hourlyRate === "number" ? override.hourlyRate : v.hourlyRate,
+              };
+            }
+            return v;
+          })
+        );
       }
     } catch (err) {
       console.error("Error fetching vehicle prices:", err);
@@ -710,10 +708,8 @@ export default function App() {
   // Fetch reservations from localStorage on mount and sync server-side webhooks
   const syncServerBookings = async (currentLocalBookings?: Booking[]) => {
     try {
-      const response = await fetch("/api/reserve");
-      if (response.ok) {
-        const serverBookings = await response.json();
-        if (Array.isArray(serverBookings) && serverBookings.length > 0) {
+      const serverBookings = await bookingApi.getAll();
+      if (Array.isArray(serverBookings) && serverBookings.length > 0) {
           const targetLocal = currentLocalBookings !== undefined ? currentLocalBookings : bookingsRef.current;
           
           const sanitizedServer = serverBookings.map((b: any) => ({
@@ -901,7 +897,6 @@ export default function App() {
             console.log(`[MAJESTIC] Synced ${countSynced} reservations from secure WordPress dispatch endpoint.`);
           }
         }
-      }
     } catch (err) {
       console.warn("Unable to sync external bookings from server:", err);
     }
@@ -1260,11 +1255,7 @@ export default function App() {
     safeLocalStorage.setItem("velvet_reservations", JSON.stringify(updatedBookings));
 
     // Sync newly created booking to the backend so Dispatchers and Drivers immediately see it!
-    fetch("/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newBooking)
-    }).catch((err) => console.warn("Failed to sync new booking to server:", err));
+    bookingApi.saveBooking(newBooking).catch((err) => console.warn("Failed to sync new booking to server:", err));
 
     // Store recently confirmed booking to show in the final step
     setConfirmedBooking(newBooking);
@@ -1376,11 +1367,7 @@ export default function App() {
 
     const target = updated.find((b) => b.id === id);
     if (target) {
-      fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(target)
-      }).catch((err) => console.warn("Failed to sync cancel to server:", err));
+      bookingApi.saveBooking(target).catch((err) => console.warn("Failed to sync cancel to server:", err));
     }
   };
 
@@ -1410,11 +1397,7 @@ export default function App() {
 
     const target = updated.find((b) => b.id === id);
     if (target) {
-      fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(target)
-      }).catch((err) => console.warn("Failed to sync reschedule to server:", err));
+      bookingApi.saveBooking(target).catch((err) => console.warn("Failed to sync reschedule to server:", err));
     }
   };
 
@@ -1426,11 +1409,7 @@ export default function App() {
     safeLocalStorage.setItem("velvet_reservations", JSON.stringify(updated));
     const target = updated.find((b) => b.id === id);
     if (target) {
-      fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(target)
-      }).catch((err) => console.warn("Failed to sync feedback to server:", err));
+      bookingApi.saveBooking(target).catch((err) => console.warn("Failed to sync feedback to server:", err));
     }
   };
 
@@ -1442,11 +1421,7 @@ export default function App() {
     safeLocalStorage.setItem("velvet_reservations", JSON.stringify(updated));
     const target = updated.find((b) => b.id === id);
     if (target) {
-      fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(target)
-      }).catch((err) => console.warn("Failed to sync invoice update to server:", err));
+      bookingApi.saveBooking(target).catch((err) => console.warn("Failed to sync invoice update to server:", err));
     }
   };
 

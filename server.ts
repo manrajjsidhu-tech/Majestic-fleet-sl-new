@@ -779,7 +779,7 @@ let aiClient: GoogleGenAI | null = null;
 
 function getAiClient() {
   if (!aiClient) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY || process.env.GOOGLE_MAPS_API_KEY;
     if (!apiKey) {
       console.warn("⚠️ Warning: GEMINI_API_KEY is not defined in environment secrets. AI Concierge fallback initialized.");
       return null;
@@ -795,6 +795,12 @@ function getAiClient() {
   }
   return aiClient;
 }
+
+// 0. Maps Key Config Endpoint
+app.get("/api/config/maps-key", (req, res) => {
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY || process.env.VITE_GOOGLE_MAPS_API_KEY || process.env.API_KEY || (process.env.GEMINI_API_KEY?.startsWith("AIza") ? process.env.GEMINI_API_KEY : null);
+  res.json({ apiKey: apiKey || null });
+});
 
 // 1. Core API Route: List Preset Barcelona Sights & Coordinates
 app.get("/api/sights", (req, res) => {

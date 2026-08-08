@@ -56,6 +56,7 @@ import {
   Pie,
 } from "recharts";
 import { Booking, Driver, FleetItem, Vehicle } from "../types";
+import { bookingApi, vehiclePriceApi } from "../services/api";
 
 // Standard translations to fit smoothly with the app's CA / EN localizations
 const LOCAL_TRANSLATIONS = {
@@ -423,12 +424,9 @@ export default function ControlManagement({
 
   const fetchPricesFromApi = async () => {
     try {
-      const res = await fetch("/api/vehicle-prices");
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setVehiclePrices(data);
-        }
+      const data = await vehiclePriceApi.getPrices();
+      if (Array.isArray(data) && data.length > 0) {
+        setVehiclePrices(data);
       }
     } catch (err) {
       console.error("Error fetching vehicle prices in admin:", err);
@@ -505,27 +503,15 @@ export default function ControlManagement({
     setIsSavingPrices(true);
     setPricingFeedback(null);
     try {
-      const res = await fetch("/api/vehicle-prices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prices: vehiclePrices }),
+      await vehiclePriceApi.updatePrices(vehiclePrices);
+      setPricingFeedback({
+        type: "success",
+        text: lang === "ca"
+          ? "✅ Tarifes actualitzades amb èxit! Els nous preus s'han publicat a tot el lloc web."
+          : "✅ Prices updated successfully! New vehicle rates are live across all booking components."
       });
-      if (res.ok) {
-        setPricingFeedback({
-          type: "success",
-          text: lang === "ca"
-            ? "✅ Tarifes actualitzades amb èxit! Els nous preus s'han publicat a tot el lloc web."
-            : "✅ Prices updated successfully! New vehicle rates are live across all booking components."
-        });
-        if (onPricesUpdated) {
-          onPricesUpdated();
-        }
-      } else {
-        const errData = await res.json();
-        setPricingFeedback({
-          type: "error",
-          text: errData.error || "Failed to update vehicle prices"
-        });
+      if (onPricesUpdated) {
+        onPricesUpdated();
       }
     } catch (err: any) {
       setPricingFeedback({
@@ -1222,14 +1208,10 @@ export default function ControlManagement({
     // Sync driver phone and name to backend booking if found
     if (foundBooking) {
       try {
-        await fetch(`/api/reserve/${foundBooking.id}/assign`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            assignedDriverId: "temp-driver-code",
-            driverPhone: phone,
-            driverName: driverDisplayName,
-          }),
+        await bookingApi.assignDriver(foundBooking.id, {
+          assignedDriverId: "temp-driver-code",
+          driverPhone: phone,
+          driverName: driverDisplayName,
         });
         onReloadBookings();
       } catch (err) {
@@ -1400,14 +1382,10 @@ export default function ControlManagement({
         const newPhone = mobilePhone.trim();
         const newName = mobileName.trim() || loggedInDriver.name;
         if (serviceCodeAuthBookingId) {
-          await fetch(`/api/reserve/${serviceCodeAuthBookingId}/assign`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              assignedDriverId: "temp-driver-code",
-              driverPhone: newPhone,
-              driverName: newName,
-            }),
+          await bookingApi.assignDriver(serviceCodeAuthBookingId, {
+            assignedDriverId: "temp-driver-code",
+            driverPhone: newPhone,
+            driverName: newName,
           });
           onReloadBookings();
         }
@@ -1518,14 +1496,8 @@ export default function ControlManagement({
   // Dispatch utilities
   const handleAssignDriverToTrip = async (bookingId: string, drvId: string) => {
     try {
-      const resp = await fetch(`/api/reserve/${bookingId}/assign`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assignedDriverId: drvId ? drvId : null }),
-      });
-      if (resp.ok) {
-        onReloadBookings();
-      }
+      await bookingApi.assignDriver(bookingId, { assignedDriverId: drvId ? drvId : null });
+      onReloadBookings();
     } catch (e) {
       console.error(e);
     }
@@ -1536,13 +1508,8 @@ export default function ControlManagement({
     setFacturaFeedback(null);
     try {
       const customEmail = resendEmails[bId];
-      const resp = await fetch(`/api/bookings/${bId}/resend-invoice`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(customEmail ? { email: customEmail } : {})
-      });
-      const data = await resp.json();
-      if (resp.ok && data.success) {
+      const data = await bookingApi.resendInvoice(bId, customEmail);
+      if (data.success) {
         setFacturaFeedback({
           type: "success",
           text: lang === "ca" 
@@ -1750,14 +1717,8 @@ export default function ControlManagement({
     status: string,
   ) => {
     try {
-      const resp = await fetch(`/api/reserve/${bookingId}/flight-status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ flightStatus: status }),
-      });
-      if (resp.ok) {
-        onReloadBookings();
-      }
+      await bookingApi.updateFlightStatus(bookingId, status);
+      onReloadBookings();
     } catch (e) {
       console.error(e);
     }

@@ -7,6 +7,21 @@ import './index.css';
 
 console.log("[VELVET] Mounting Velvet Chauffeur App root...");
 
+// Auto-load Google Maps JavaScript SDK if API Key is configured
+fetch("/api/config/maps-key")
+  .then((res) => res.json())
+  .then(({ apiKey }) => {
+    if (apiKey && !(window as any).google?.maps) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+      console.log("[VELVET] Dynamically injected Google Maps Platform JavaScript SDK.");
+    }
+  })
+  .catch((err) => console.warn("[VELVET] Could not check Google Maps config:", err));
+
 // Suppress cross-origin "Script error." in preview iframe environment
 window.addEventListener('error', (event) => {
   if (event.message === 'Script error.' || event.message === 'Script error') {

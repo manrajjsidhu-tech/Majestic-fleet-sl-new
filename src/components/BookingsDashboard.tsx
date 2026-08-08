@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Clock, Calendar, Shield, Receipt, Trash2, Edit2, CheckCircle2, AlertTriangle, Ship, Car, Compass, Sparkles, Printer, Plane, MessageSquare, Send, Loader2, Mail, Phone } from "lucide-react";
 import { motion } from "motion/react";
 import { Booking, Vehicle } from "../types";
+import { bookingApi } from "../services/api";
 import PostTripFeedback from "./PostTripFeedback";
 import BookingItineraryModal from "./BookingItineraryModal";
 import LiveDriverTrackingModal from "./LiveDriverTrackingModal";
@@ -558,11 +559,7 @@ export default function BookingsDashboard({
       setSimulatedCompletedIds((prev) => [...prev, id]);
     }
     try {
-      await fetch(`/api/reserve/${id}/flight-status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ flightStatus: "Complete" })
-      });
+      await bookingApi.updateFlightStatus(id, "Complete");
     } catch (e) {
       console.warn("Could not sync complete status to server:", e);
     }
@@ -1085,14 +1082,7 @@ export default function BookingsDashboard({
                                         setSendingInvoiceId(b.id);
                                         try {
                                           const targetEmail = resendEmails[b.id] !== undefined ? resendEmails[b.id] : b.contactEmail;
-                                          const response = await fetch(`/api/bookings/${b.id}/resend-invoice`, {
-                                            method: "POST",
-                                            headers: { "Content-Type": "application/json" },
-                                            body: JSON.stringify({ email: targetEmail })
-                                          });
-                                          if (!response.ok) {
-                                            throw new Error("HTTP error " + response.status);
-                                          }
+                                          await bookingApi.resendInvoice(b.id, targetEmail);
                                           setSuccessInvoiceId(b.id);
                                           setTimeout(() => setSuccessInvoiceId(null), 3500);
                                         } catch (err) {
