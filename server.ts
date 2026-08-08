@@ -773,6 +773,17 @@ const PORT = 3000;
 
 app.use(express.json());
 
+// CORS & Preflight Options Middleware for full cross-origin compatibility
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Lazy-initialize Gemini SDK to fail gracefully if the key is missing during container cold-start,
 // and strictly protect user secrets.
 let aiClient: GoogleGenAI | null = null;

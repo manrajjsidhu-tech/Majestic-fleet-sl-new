@@ -8,35 +8,5 @@
     "recipient": "dispatcher",
     "read": true,
     "createdAt": "2026-07-13T15:26:17.587Z"
-  },
-  {
-    "id": "seed-notif-2",
-    "title": "New Ride Assigned",
-    "message": "Trip #VC-8842 assigned to Executive Van (Driver ID: D-104).",
-    "type": "dispatch",
-    "sender": "dispatch_system",
-    "recipient": "dispatcher",
-    "read": false,
-    "createdAt": "2026-08-08T14:30:00.000Z"
-  },
-  {
-    "id": "seed-notif-3",
-    "title": "Flight Status Update",
-    "message": "Inbound flight BA-452 status changed to Landed. Terminal pickup driver notified.",
-    "type": "flight_alert",
-    "sender": "flight_tracker",
-    "recipient": "dispatcher",
-    "read": false,
-    "createdAt": "2026-08-08T16:15:22.000Z"
-  },
-  {
-    "id": "seed-notif-4",
-    "title": "Vehicle Maintenance Warning",
-    "message": "Fleet Sedan #S-02 reached inspection interval and requires scheduled service.",
-    "type": "warning",
-    "sender": "fleet_manager",
-    "recipient": "dispatcher",
-    "read": false,
-    "createdAt": "2026-08-08T16:45:10.000Z"
   }
 ]
