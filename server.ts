@@ -1230,41 +1230,41 @@ function readServerBookings(): any[] {
   try {
     if (fs.existsSync(BOOKINGS_FILE)) {
       const data = fs.readFileSync(BOOKINGS_FILE, "utf-8");
-      const bookings = JSON.parse(data) || [];
-      
-      let updated = false;
-      for (const b of bookings) {
-        if (!b.serviceCode) {
-          b.serviceCode = Math.floor(1000 + Math.random() * 9000).toString();
-          updated = true;
+      if (data && data.trim()) {
+        const bookings = JSON.parse(data) || [];
+        
+        let updated = false;
+        for (const b of bookings) {
+          if (!b.serviceCode) {
+            b.serviceCode = Math.floor(1000 + Math.random() * 9000).toString();
+            updated = true;
+          }
         }
-      }
 
-      // Sort a copy of bookings to assign sequential invoice numbers starting from 0 based on oldest-first creation
-      const sortedByCreated = [...bookings].sort((a, b) => {
-        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        return timeA - timeB;
-      });
-
-      for (let i = 0; i < sortedByCreated.length; i++) {
-        const bId = sortedByCreated[i].id;
-        const origBooking = bookings.find((ob: any) => ob.id === bId);
-        if (origBooking && origBooking.invoiceNumber === undefined) {
-          origBooking.invoiceNumber = i;
-          updated = true;
-        }
-      }
-      
-      bookingsCache = bookings;
-
-      if (updated) {
-        fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), "utf-8", (err) => {
-          if (err) console.error("Error writing server_bookings.json:", err);
+        // Sort a copy of bookings to assign sequential invoice numbers starting from 0 based on oldest-first creation
+        const sortedByCreated = [...bookings].sort((a, b) => {
+          const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return timeA - timeB;
         });
+
+        for (let i = 0; i < sortedByCreated.length; i++) {
+          const bId = sortedByCreated[i].id;
+          const origBooking = bookings.find((ob: any) => ob.id === bId);
+          if (origBooking && origBooking.invoiceNumber === undefined) {
+            origBooking.invoiceNumber = i;
+            updated = true;
+          }
+        }
+        
+        bookingsCache = bookings;
+
+        if (updated) {
+          fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), "utf-8");
+        }
+        
+        return bookingsCache;
       }
-      
-      return bookingsCache;
     }
   } catch (err) {
     console.error("Error reading server_bookings.json:", err);
@@ -1277,9 +1277,7 @@ function readServerBookings(): any[] {
 function writeServerBookings(bookings: any[]) {
   bookingsCache = bookings;
   try {
-    fs.writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), "utf-8", (err) => {
-      if (err) console.error("Error writing server_bookings.json:", err);
-    });
+    fs.writeFileSync(BOOKINGS_FILE, JSON.stringify(bookings, null, 2), "utf-8");
   } catch (err) {
     console.error("Error writing server_bookings.json:", err);
   }
@@ -1520,8 +1518,10 @@ function readServerDrivers(): any[] {
   try {
     if (fs.existsSync(DRIVERS_FILE)) {
       const data = fs.readFileSync(DRIVERS_FILE, "utf-8");
-      driversCache = JSON.parse(data) || [];
-      return driversCache;
+      if (data && data.trim()) {
+        driversCache = JSON.parse(data) || [];
+        return driversCache;
+      }
     }
   } catch (err) {
     console.error("Error reading server_drivers.json:", err);
@@ -1555,9 +1555,7 @@ function readServerDrivers(): any[] {
 function writeServerDrivers(drivers: any[]) {
   driversCache = drivers;
   try {
-    fs.writeFile(DRIVERS_FILE, JSON.stringify(drivers, null, 2), "utf-8", (err) => {
-      if (err) console.error("Error writing server_drivers.json:", err);
-    });
+    fs.writeFileSync(DRIVERS_FILE, JSON.stringify(drivers, null, 2), "utf-8");
   } catch (err) {
     console.error("Error writing server_drivers.json:", err);
   }
@@ -1571,8 +1569,10 @@ function readServerFleet(): any[] {
   try {
     if (fs.existsSync(FLEET_FILE)) {
       const data = fs.readFileSync(FLEET_FILE, "utf-8");
-      fleetCache = JSON.parse(data) || [];
-      return fleetCache;
+      if (data && data.trim()) {
+        fleetCache = JSON.parse(data) || [];
+        return fleetCache;
+      }
     }
   } catch (err) {
     console.error("Error reading server_fleet.json:", err);
@@ -1609,9 +1609,7 @@ function readServerFleet(): any[] {
 function writeServerFleet(fleet: any[]) {
   fleetCache = fleet;
   try {
-    fs.writeFile(FLEET_FILE, JSON.stringify(fleet, null, 2), "utf-8", (err) => {
-      if (err) console.error("Error writing server_fleet.json:", err);
-    });
+    fs.writeFileSync(FLEET_FILE, JSON.stringify(fleet, null, 2), "utf-8");
   } catch (err) {
     console.error("Error writing server_fleet.json:", err);
   }
@@ -1671,8 +1669,10 @@ function readServerVehiclePrices(): any[] {
   try {
     if (fs.existsSync(VEHICLE_PRICES_FILE)) {
       const data = fs.readFileSync(VEHICLE_PRICES_FILE, "utf-8");
-      vehiclePricesCache = JSON.parse(data) || DEFAULT_VEHICLE_PRICES;
-      return vehiclePricesCache;
+      if (data && data.trim()) {
+        vehiclePricesCache = JSON.parse(data) || DEFAULT_VEHICLE_PRICES;
+        return vehiclePricesCache;
+      }
     }
   } catch (err) {
     console.error("Error reading server_vehicle_prices.json:", err);
@@ -1685,9 +1685,7 @@ function readServerVehiclePrices(): any[] {
 function writeServerVehiclePrices(prices: any[]) {
   vehiclePricesCache = prices;
   try {
-    fs.writeFile(VEHICLE_PRICES_FILE, JSON.stringify(prices, null, 2), "utf-8", (err) => {
-      if (err) console.error("Error writing server_vehicle_prices.json:", err);
-    });
+    fs.writeFileSync(VEHICLE_PRICES_FILE, JSON.stringify(prices, null, 2), "utf-8");
   } catch (err) {
     console.error("Error writing server_vehicle_prices.json:", err);
   }
